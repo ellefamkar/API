@@ -16,7 +16,7 @@
   </head>
   <body>
     <div class="spinner" id="spinner"></div>
-    <table id="data-table" class="data-table">
+    <table id="data-table" class="data-table fade-in">
       <thead class="data-table__head">
         <tr class="data-table__row">
           <th class="data-table__cell">Name</th>
@@ -35,25 +35,27 @@
 
       async function fetchData() {
         try {
-          spinner.classList.remove("fade-out");
-          spinner.classList.add("fade-in");
+          spinner.style.display = "block";
+          table.style.display = "none";
+
+          // const { data } = await axios.get("/db.json");
 
           const { data } = await axios.get(
             "https://api.restful-api.dev/objects"
           );
 
           if (data) {
-            spinner.classList.add("fade-out");
-
             setTimeout(() => {
+              spinner.classList.add("fade-out");
               spinner.style.display = "none";
               table.style.display = "block";
-              table.classList.add("fade-in");
             }, 1000);
 
-            dataError.innerText = '';
+            dataError.innerText = "";
+            dataError.style.display = "none";
 
             const tbody = table.querySelector(".data-table__body");
+            tbody.innerHTML = "";
 
             data.forEach((item) => {
               const row = document.createElement("tr");
@@ -81,10 +83,13 @@
           }
         } catch (error) {
           console.error("Fetch Error:", error);
+
           spinner.style.display = "none";
           table.style.display = "none";
+
           dataError.innerText =
             "There is an error loading the data. Please try again later.";
+          dataError.style.display = "block";
         }
       }
 

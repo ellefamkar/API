@@ -12,10 +12,9 @@
      height: 50px;
      animation: spin 2s linear infinite;
      margin: 0 auto;
-     position: absolute;
+     position: fixed;
      top: 50%;
      left: 50%;
-     transform: translate(-50%, -50%);
    }
 
    @keyframes spin {
@@ -28,7 +27,7 @@
    }
 
    .fade-in {
-     animation: fadeIn 1s ease-in-out;
+     animation: fadeIn 1.5s ease-in-out;
    }
 
    @keyframes fadeIn {
@@ -41,7 +40,9 @@
    }
 
    .fade-out {
-    animation: fadeOut 1s ease-in-out;
+    /* animation: fadeOut 1s ease-in-out; */
+    opacity: 0;
+    transition: all 1s ease-out;
   }
 
 @keyframes fadeOut {
@@ -64,7 +65,8 @@ th,
 td {
     padding: 12px;
     border: 1px solid #1A4C49;
-    text-align: left;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .data-table__cell {
@@ -82,4 +84,5 @@ td {
 
 #data-error{
     color: #eb0202;
+    display: none;
 }
