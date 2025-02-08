@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="description"
+      content="Marigold Web Development - A showcase of professional web development practices"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <title>API Data Table</title>
+  </head>
+  <body>
+    <div class="spinner" id="spinner"></div>
+    <table id="data-table" class="data-table">
+      <thead class="data-table__head">
+        <tr class="data-table__row">
+          <th class="data-table__cell">Name</th>
+          <th class="data-table__cell">Details</th>
+        </tr>
+      </thead>
+      <tbody class="data-table__body"></tbody>
+    </table>
+
+    <p id="data-error"></p>
+
+    <script>
+      const spinner = document.getElementById("spinner");
+      const table = document.getElementById("data-table");
+      const dataError = document.getElementById("data-error");
+
+      async function fetchData() {
+        try {
+          spinner.classList.remove("fade-out");
+          spinner.classList.add("fade-in");
+
+          const { data } = await axios.get(
+            "https://api.restful-api.dev/objects"
+          );
+
+          if (data) {
+            spinner.classList.add("fade-out");
+
+            setTimeout(() => {
+              spinner.style.display = "none";
+              table.style.display = "block";
+              table.classList.add("fade-in");
+            }, 1000);
+
+            dataError.innerText = '';
+
+            const tbody = table.querySelector(".data-table__body");
+
+            data.forEach((item) => {
+              const row = document.createElement("tr");
+              row.classList.add("data-table__row");
+
+              const nameCell = document.createElement("td");
+              const detailsCell = document.createElement("td");
+
+              nameCell.innerText = item.name;
+
+              if (item.data && item.data !== null) {
+                let detailsText = "";
+                for (let key in item.data) {
+                  detailsText += `${key}: ${item.data[key]}<br/>`;
+                }
+                detailsCell.innerHTML = detailsText;
+              } else {
+                detailsCell.innerText = "-";
+              }
+
+              row.appendChild(nameCell);
+              row.appendChild(detailsCell);
+              tbody.appendChild(row);
+            });
+          }
+        } catch (error) {
+          console.error("Fetch Error:", error);
+          spinner.style.display = "none";
+          table.style.display = "none";
+          dataError.innerText =
+            "There is an error loading the data. Please try again later.";
+        }
+      }
+
+      fetchData();
+    </script>
+  </body>
+</html>
