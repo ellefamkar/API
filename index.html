@@ -35,22 +35,23 @@
 
       async function fetchData() {
         try {
+          dataError.innerText = "";
           spinner.style.display = "block";
           table.style.display = "none";
+          dataError.style.display = "none";
 
-          const { data } = await axios.get(
-            "https://api.restful-api.dev/objects"
-          );
+          const res = await axios.get("https://api.restful-api.dev/objects");
+          const data = res.data;
 
-          if (data) {
+          // console.log(res);
+
+          if (res.status === 200 && Array.isArray(data) && data.length > 0) {
+            
             setTimeout(() => {
               spinner.classList.add("fade-out");
               spinner.style.display = "none";
               table.style.display = "block";
             }, 1000);
-
-            dataError.innerText = "";
-            dataError.style.display = "none";
 
             const tbody = table.querySelector(".data-table__body");
             tbody.innerHTML = "";
@@ -62,9 +63,9 @@
               const nameCell = document.createElement("td");
               const detailsCell = document.createElement("td");
 
-              nameCell.innerText = item.name;
+              nameCell.innerText = item.name || "Unnamed";
 
-              if (item.data && item.data !== null) {
+              if (item.data) {
                 let detailsText = "";
                 for (let key in item.data) {
                   detailsText += `${key}: ${item.data[key]}<br/>`;
@@ -78,6 +79,10 @@
               row.appendChild(detailsCell);
               tbody.appendChild(row);
             });
+          } else {
+            throw new Error(
+              `Error ${res.status}: ${res.data.message || res.statusText}`
+            );
           }
         } catch (error) {
           console.error("Fetch Error:", error);
@@ -85,8 +90,21 @@
           spinner.style.display = "none";
           table.style.display = "none";
 
-          dataError.innerText =
-            "There is an error loading the data. Please try again later.";
+          if (error.response) {
+            console.log(`API Error: ${error.response}`);
+            dataError.innerText = `Error ${error.response.status}: ${
+              error.response.data?.message || error.response.statusText
+            }`;
+          } else if (error.request) {
+            console.log(`Req Error: ${error}`);
+            dataError.innerText =
+              "Network error: Please check your connection.";
+          } else {
+            console.log(`Unexpected Error: ${error}`);
+            dataError.innerText =
+              "Unexpected error occurred. Please try again later.";
+          }
+
           dataError.style.display = "block";
         }
       }
