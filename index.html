@@ -36,17 +36,14 @@
       async function fetchData() {
         try {
           dataError.innerText = "";
+          dataError.style.display = "none";
           spinner.style.display = "block";
           table.style.display = "none";
-          dataError.style.display = "none";
 
           const res = await axios.get("https://api.restful-api.dev/objects");
           const data = res.data;
 
-          // console.log(res);
-
           if (res.status === 200 && Array.isArray(data) && data.length > 0) {
-            
             setTimeout(() => {
               spinner.classList.add("fade-out");
               spinner.style.display = "none";
@@ -90,6 +87,8 @@
           spinner.style.display = "none";
           table.style.display = "none";
 
+          dataError.style.display = "block";
+
           if (error.response) {
             console.log(`API Error: ${error.response}`);
             dataError.innerText = `Error ${error.response.status}: ${
@@ -98,14 +97,12 @@
           } else if (error.request) {
             console.log(`Req Error: ${error}`);
             dataError.innerText =
-              "Network error: Please check your connection.";
+              "Network error: Please check your internet connection.";
           } else {
             console.log(`Unexpected Error: ${error}`);
             dataError.innerText =
               "Unexpected error occurred. Please try again later.";
           }
-
-          dataError.style.display = "block";
         }
       }
 
